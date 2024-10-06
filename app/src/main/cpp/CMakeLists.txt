@@ -11,7 +11,7 @@ add_definitions(-DUSE_PTHREADS=1)
 add_subdirectory(SDL2)
 add_subdirectory(mgba)
 
-INCLUDE_DIRECTORIES("SDL2/include" "mgba/include" "mgba/src" "mgba/src/platform/sdl" "android/opengl" "android/sdl")
+INCLUDE_DIRECTORIES("SDL2/include/SDL3" "mgba/include" "mgba/src" "mgba/src/platform/sdl" "android/opengl" "android/sdl")
 file(GLOB PLATFORM_SRC mgba/src/platform/sdl/sdl-*.c)
 file(GLOB GBA_UTIL_SRC android/utils/*.cpp)
 add_library(${CMAKE_PROJECT_NAME} SHARED
