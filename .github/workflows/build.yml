@@ -26,6 +26,9 @@ jobs:
       
       - name: Build with Gradle
         run: |
+          git submodule add https://github.com/libsdl-org/SDL.git SDL2
+          git submodule add https://github.com/mgba-emu/mgba.git mgba
+          git submodule update --init --recursive
           chmod +x gradlew
           ./gradlew assembleDebug
         
