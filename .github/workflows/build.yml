@@ -29,6 +29,7 @@ jobs:
           git submodule add https://github.com/libsdl-org/SDL.git app/src/main/cpp/SDL2
           git submodule add https://github.com/mgba-emu/mgba.git app/src/main/cpp/mgba
           git submodule update --init --recursive
+          cp -r app/src/main/cpp/SDL2/android-project/app/src/main/java/org/libsdl/app app/src/main/java/org/libsdl/
           chmod +x gradlew
           ./gradlew assembleDebug
         
