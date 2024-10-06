@@ -1,0 +1,38 @@
+name: mgba-build
+
+on:
+  push:
+    branches: [ "*" ]
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:        
+  Android-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+          cache: gradle
+      
+      - name: Build with Gradle
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
+        
+
+      - name: Upload Android Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mgba-android
+          path: ./android/app/build/outputs/apk/debug/app-debug.apk
+  
