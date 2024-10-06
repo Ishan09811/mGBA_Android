@@ -31,7 +31,10 @@ import hh.game.mgba_android.utils.Gametype
 import hh.game.mgba_android.utils.controllerUtil.getDirectionPressed
 import hh.game.mgba_android.utils.controllerUtil.lastDirect
 import hh.game.mgba_android.utils.getKey
-import org.libsdl.app.SDLActivity
+import org.libsdl.app.SDLUtils
+import org.libsdl.app.SDLUtils.mFullscreenModeActive
+import org.libsdl.app.SDLUtils.onNativeKeyDown
+import org.libsdl.app.SDLUtils.onNativeKeyUp
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -54,6 +57,7 @@ class GameActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mFullscreenModeActive = false
         setContentView(R.layout.activity_game)
         var gamepath = intent.getStringExtra("gamepath")
         val gameNum = intent.getStringExtra("cheat")
@@ -81,20 +85,21 @@ class GameActivity : AppCompatActivity() {
                 "}"
         if (gamepath != null)
             CheatUtils.generateCheat(this, gameNum, cheatpath)
-            
-        initSDL(gamepath, internalCheatFile)
-        
+        SDLUtils.init(this, findViewById(R.id.gameView))
+            .setLibraries(
+                "SDL2",
+                "mgba",
+                "mgba_android"
+            )
+            .setArguments(
+                gamepath,
+                internalCheatFile,
+//                fragmentShader
+            )
         addGameControler()
 //        GlobalScope.launch {
 //            Gameutils.getFPS().toString()
 //        }
-    }
-
-    private fun initSDL(gamepath: String?, internalCheatFile: String?) {
-        // You can set the SDL library arguments here as needed
-        SDLActivity.setLibraryPaths("SDL2", "mgba", "mgba_android")
-        SDLActivity.setArguments(gamepath, internalCheatFile)
-        SDLActivity.init(this, findViewById(R.id.gameView))
     }
 
     override fun onDestroy() {
@@ -114,18 +119,18 @@ class GameActivity : AppCompatActivity() {
         if (gbaKey != GBAKeys.GBA_KEY_NONE.key) {
             when (event.action) {
                 KeyEvent.ACTION_DOWN -> {
-                    nativeKeyDown(gbaKey)
+                    onNativeKeyDown(gbaKey)
                     handled = true
                 }
 
                 KeyEvent.ACTION_UP -> {
-                    nativeKeyUp(gbaKey)
+                    onNativeKeyUp(gbaKey)
                     handled = true
                 }
 
             }
         }
-        return handled || super.dispatchKeyEvent(event)
+        return handled || SDLUtils.dispatchKeyEvent(event)
     }
 
     private fun addGameControler() {
@@ -523,5 +528,3 @@ class GameActivity : AppCompatActivity() {
     external fun getMemoryBlock(): ArrayList<CoreMemoryBlock>
     external fun writeMem(address: Int, value: Int)
 }
-
-
